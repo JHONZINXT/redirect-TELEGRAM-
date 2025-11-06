@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Aguarde… estamos te levando para o Telegram</title>
+  <meta name="description" content="Acesso seguro e rápido. Clique no botão ou aguarde o redirecionamento automático para continuar no Telegram." />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  <style>
+    :root { --bg:#0b0f1a; --card:#11182a; --fg:#e6f1ff; --muted:#9fb3c8; }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial; background:radial-gradient(1200px 600px at 10% -10%, #1a2340, #0b0f1a); color:var(--fg);}
+    .wrap{min-height:100%; display:grid; place-items:center; padding:24px}
+    .card{width:100%; max-width:720px; background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02)); border:1px solid rgba(255,255,255,.08); border-radius:20px; box-shadow:0 20px 60px rgba(0,0,0,.4); padding:28px}
+    h1{font-size:clamp(20px, 3vw, 32px); margin:0 0 6px}
+    p{margin:6px 0; color:var(--muted)}
+    .cta{margin-top:18px; display:flex; gap:12px; flex-wrap:wrap}
+    .btn{appearance:none; border:0; border-radius:14px; padding:14px 18px; font-weight:700; cursor:pointer; transition:transform .06s ease, box-shadow .2s ease;}
+    .btn-primary{background:#3b82f6; color:#fff; box-shadow:0 8px 20px rgba(59,130,246,.35)}
+    .btn-primary:hover{transform:translateY(-1px)}
+    .btn-outline{background:transparent; color:var(--fg); border:1px solid rgba(255,255,255,.18)}
+    .row{display:flex; gap:12px; align-items:center; flex-wrap:wrap}
+    .tag{font-size:12px; color:#c4d3e6; background:rgba(255,255,255,.06); padding:6px 10px; border-radius:999px; border:1px solid rgba(255,255,255,.12)}
+    .loading{display:flex; align-items:center; gap:10px; margin-top:14px; color:#c4d3e6}
+    .spinner{width:16px; height:16px; border:3px solid rgba(255,255,255,.25); border-top-color:#fff; border-radius:50%; animation:spin .9s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .foot{margin-top:16px; font-size:12px; color:#8aa1b7}
+    code{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; font-size:12px; color:#bcd7ff}
+  </style>
+
+  <!-- META PIXEL: troque SEU_PIXEL_ID -->
+  <script>
+    // Evita duplicar fbq em ambientes de preview
+    (function(f,b,e,v,n,t,s){
+      if(f.fbq) return; n=f.fbq=function(){n.callMethod? n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+      if(!f._fbq) f._fbq=n; n.push=n; n.loaded=!0; n.version='2.0';
+      n.queue=[]; t=b.createElement(e); t.async=!0; t.src=v; s=b.getElementsByTagName(e)[0]; s.parentNode.insertBefore(t,s)
+    })(window, document, 'script', 'https://connect.facebook.net/en_US/fbevents.js');
+
+    fbq('init', 'SEU_PIXEL_ID');
+    fbq('track', 'PageView');
+  </script>
+  <noscript>
+    <img height="1" width="1" style="display:none" alt=""
+         src="https://www.facebook.com/tr?id=SEU_PIXEL_ID&ev=PageView&noscript=1" />
+  </noscript>
+</head>
+<body>
+  <div class="wrap">
+    <main class="card">
+      <div class="row" style="justify-content:space-between;">
+        <h1>Quase lá… levando você com segurança para o Telegram</h1>
+        <span class="tag" id="utm-tag">origem: meta</span>
+      </div>
+      <p>Para garantir o rastreamento correto da campanha e sua segurança, passamos por uma etapa rápida antes de abrir o bot.</p>
+
+      <div class="loading"><span class="spinner"></span> Preparando seu acesso…</div>
+
+      <div class="cta">
+        <button class="btn btn-primary" id="btn-ir">Ir para o Telegram agora</button>
+        <button class="btn btn-outline" id="btn-copiar" title="Copia o link de acesso">Copiar link</button>
+      </div>
+
+      <div class="foot">
+        Se não redirecionar automaticamente em alguns segundos, use o botão acima. <br/>
+        <code id="debug"></code>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    // ========= CONFIG =========
+    const REDIRECTOR = 'https://pixup.ninjabet.site/go/telegram'; // seu endpoint backend
+    const BOT_FALLBACK = 'https://t.me/SEU_BOT';                   // fallback se algo falhar
+
+    // ========= HELPERS =========
+    const qs = new URLSearchParams(location.search);
+    function uuidShort(){ return Math.random().toString(36).slice(2, 8) + Date.now().toString(36).slice(-4); }
+    function getParam(name, def=''){ return qs.get(name) || def; }
+    function toQuery(obj){ return Object.entries(obj).filter(([,v])=>v!==undefined && v!=='').map(([k,v])=>`${encodeURIComponent(k)}=${encodeURIComponent(v)}`).join('&'); }
+
+    // UTM & fbclid
+    const payload = {
+      fbclid:   getParam('fbclid',''),
+      utm_source:   getParam('utm_source','meta'),
+      utm_medium:   getParam('utm_medium','paid'),
+      utm_campaign: getParam('utm_campaign',''),
+      utm_content:  getParam('utm_content',''),
+      utm_term:     getParam('utm_term','')
+    };
+
+    // Exibir UTM no badge
+    const utmTag = document.getElementById('utm-tag');
+    utmTag.textContent = `origem: ${payload.utm_source || 'meta'}`;
+
+    // ViewContent (Pixel) — dedupe com CAPI via event_id (lead_uuid)
+    const lead_uuid = uuidShort();
+    fbq('track', 'ViewContent', { content_category: 'telegram_bridge' }, { eventID: lead_uuid });
+
+    // montar URL final do redirector (backend vai salvar lead e redirecionar pro bot)
+    const redirectUrl = `${REDIRECTOR}?${toQuery({ ...payload, lead_uuid })}`;
+
+    // UI
+    const debug = document.getElementById('debug');
+    debug.textContent = redirectUrl;
+
+    async function go(){
+      try {
+        // Abre o redirector (ele salvará o lead, disparará CAPI e redirecionará para o bot)
+        location.href = redirectUrl;
+      } catch (e) {
+        console.error(e);
+        location.href = BOT_FALLBACK + `?start=lead_${lead_uuid}`;
+      }
+    }
+
+    document.getElementById('btn-ir').addEventListener('click', go);
+    document.getElementById('btn-copiar').addEventListener('click', async () => {
+      try { await navigator.clipboard.writeText(redirectUrl); } catch(e){}
+    });
+
+    // Auto-redirect após 1.8s (permite o Pixel carregar primeiro)
+    setTimeout(go, 1800);
+  </script>
+</body>
+</html>
