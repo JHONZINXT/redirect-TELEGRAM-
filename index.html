@@ -3,37 +3,45 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Aguarde… estamos te levando para o Telegram</title>
-  <meta name="description" content="Acesso seguro e rápido. Clique no botão ou aguarde o redirecionamento automático para continuar no Telegram." />
+  <title>Aguarde… verificando dados e preparando seu acesso</title>
+  <meta name="description" content="Carregando Pixel e validando dados de campanha. Em instantes, você será levado ao Telegram." />
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
   <style>
-    :root { --bg:#0b0f1a; --card:#11182a; --fg:#e6f1ff; --muted:#9fb3c8; }
+    :root { --bg:#070b14; --card:#0d1324; --fg:#ebf1ff; --muted:#a6b6ce; --brand:#3b82f6; --ok:#10b981; }
     *{box-sizing:border-box}
     html,body{height:100%}
-    body{margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial; background:radial-gradient(1200px 600px at 10% -10%, #1a2340, #0b0f1a); color:var(--fg);}
+    body{margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial; background:radial-gradient(1200px 600px at 10% -10%, #182248, #070b14); color:var(--fg);}    
     .wrap{min-height:100%; display:grid; place-items:center; padding:24px}
-    .card{width:100%; max-width:720px; background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02)); border:1px solid rgba(255,255,255,.08); border-radius:20px; box-shadow:0 20px 60px rgba(0,0,0,.4); padding:28px}
+    .card{width:100%; max-width:720px; background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02)); border:1px solid rgba(255,255,255,.08); border-radius:22px; box-shadow:0 20px 60px rgba(0,0,0,.45); padding:28px}
     h1{font-size:clamp(20px, 3vw, 32px); margin:0 0 6px}
     p{margin:6px 0; color:var(--muted)}
+    .row{display:flex; gap:12px; align-items:center; justify-content:space-between; flex-wrap:wrap}
+    .tag{font-size:12px; color:#cfe0ff; background:rgba(255,255,255,.06); padding:6px 10px; border-radius:999px; border:1px solid rgba(255,255,255,.12)}
+
+    .stage{display:flex; align-items:center; gap:10px; margin:12px 0}
+    .pulse{width:10px; height:10px; border-radius:50%; background:var(--brand); box-shadow:0 0 0 0 rgba(59,130,246,.7); animation:pulse 1.4s infinite}
+    @keyframes pulse{to{box-shadow:0 0 0 14px rgba(59,130,246,0)}}
+
+    .bar{position:relative; height:12px; background:rgba(255,255,255,.08); border-radius:999px; overflow:hidden; margin:14px 0 6px}
+    .bar>i{position:absolute; inset:0; width:0%; background:linear-gradient(90deg, var(--brand), #60a5fa); border-radius:inherit; transition:width .2s ease}
+    .bar>i::after{content:""; position:absolute; inset:0; background:linear-gradient(90deg, rgba(255,255,255,.25), rgba(255,255,255,0)); filter:blur(6px)}
+
+    .timer{font-weight:700; letter-spacing:.3px}
     .cta{margin-top:18px; display:flex; gap:12px; flex-wrap:wrap}
-    .btn{appearance:none; border:0; border-radius:14px; padding:14px 18px; font-weight:700; cursor:pointer; transition:transform .06s ease, box-shadow .2s ease;}
-    .btn-primary{background:#3b82f6; color:#fff; box-shadow:0 8px 20px rgba(59,130,246,.35)}
+    .btn{appearance:none; border:0; border-radius:14px; padding:14px 18px; font-weight:700; cursor:pointer; transition:transform .06s ease, box-shadow .2s ease}
+    .btn-primary{background:var(--brand); color:#fff; box-shadow:0 8px 20px rgba(59,130,246,.35)}
     .btn-primary:hover{transform:translateY(-1px)}
     .btn-outline{background:transparent; color:var(--fg); border:1px solid rgba(255,255,255,.18)}
-    .row{display:flex; gap:12px; align-items:center; flex-wrap:wrap}
-    .tag{font-size:12px; color:#c4d3e6; background:rgba(255,255,255,.06); padding:6px 10px; border-radius:999px; border:1px solid rgba(255,255,255,.12)}
-    .loading{display:flex; align-items:center; gap:10px; margin-top:14px; color:#c4d3e6}
-    .spinner{width:16px; height:16px; border:3px solid rgba(255,255,255,.25); border-top-color:#fff; border-radius:50%; animation:spin .9s linear infinite}
-    @keyframes spin{to{transform:rotate(360deg)}}
+    .btn:disabled{opacity:.6; cursor:not-allowed}
+
     .foot{margin-top:16px; font-size:12px; color:#8aa1b7}
     code{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; font-size:12px; color:#bcd7ff}
   </style>
 
   <!-- META PIXEL: troque SEU_PIXEL_ID -->
   <script>
-    // Evita duplicar fbq em ambientes de preview
     (function(f,b,e,v,n,t,s){
       if(f.fbq) return; n=f.fbq=function(){n.callMethod? n.callMethod.apply(n,arguments):n.queue.push(arguments)};
       if(!f._fbq) f._fbq=n; n.push=n; n.loaded=!0; n.version='2.0';
@@ -51,21 +59,22 @@
 <body>
   <div class="wrap">
     <main class="card">
-      <div class="row" style="justify-content:space-between;">
-        <h1>Quase lá… levando você com segurança para o Telegram</h1>
+      <div class="row">
+        <h1>Preparando seu acesso ao Telegram com segurança</h1>
         <span class="tag" id="utm-tag">origem: meta</span>
       </div>
-      <p>Para garantir o rastreamento correto da campanha e sua segurança, passamos por uma etapa rápida antes de abrir o bot.</p>
+      <div class="stage"><span class="pulse"></span><p id="stage-txt">Carregando Pixel de medição…</p></div>
 
-      <div class="loading"><span class="spinner"></span> Preparando seu acesso…</div>
+      <div class="bar"><i id="bar"></i></div>
+      <p><span class="timer"><span id="seconds">4</span>s</span> para concluir a verificação e liberar o botão.</p>
 
       <div class="cta">
-        <button class="btn btn-primary" id="btn-ir">Ir para o Telegram agora</button>
+        <button class="btn btn-primary" id="btn-ir" disabled>Ir para o Telegram agora</button>
         <button class="btn btn-outline" id="btn-copiar" title="Copia o link de acesso">Copiar link</button>
       </div>
 
       <div class="foot">
-        Se não redirecionar automaticamente em alguns segundos, use o botão acima. <br/>
+        Se não redirecionar automaticamente, use o botão acima. <br/>
         <code id="debug"></code>
       </div>
     </main>
@@ -75,16 +84,18 @@
     // ========= CONFIG =========
     const REDIRECTOR = 'https://pixup.ninjabet.site/go/telegram'; // seu endpoint backend
     const BOT_FALLBACK = 'https://t.me/SEU_BOT';                   // fallback se algo falhar
+    const AUTO_DELAY_MS = 4200;                                    // atraso total (sugestão 3.5–5s)
 
     // ========= HELPERS =========
     const qs = new URLSearchParams(location.search);
+    const sleep = (ms)=>new Promise(r=>setTimeout(r,ms));
     function uuidShort(){ return Math.random().toString(36).slice(2, 8) + Date.now().toString(36).slice(-4); }
     function getParam(name, def=''){ return qs.get(name) || def; }
     function toQuery(obj){ return Object.entries(obj).filter(([,v])=>v!==undefined && v!=='').map(([k,v])=>`${encodeURIComponent(k)}=${encodeURIComponent(v)}`).join('&'); }
 
     // UTM & fbclid
     const payload = {
-      fbclid:   getParam('fbclid',''),
+      fbclid:       getParam('fbclid',''),
       utm_source:   getParam('utm_source','meta'),
       utm_medium:   getParam('utm_medium','paid'),
       utm_campaign: getParam('utm_campaign',''),
@@ -92,29 +103,67 @@
       utm_term:     getParam('utm_term','')
     };
 
-    // Exibir UTM no badge
+    // UI refs
     const utmTag = document.getElementById('utm-tag');
+    const stageTxt = document.getElementById('stage-txt');
+    const bar = document.getElementById('bar');
+    const secondsEl = document.getElementById('seconds');
+    const btnIr = document.getElementById('btn-ir');
+    const debug = document.getElementById('debug');
+
     utmTag.textContent = `origem: ${payload.utm_source || 'meta'}`;
 
-    // ViewContent (Pixel) — dedupe com CAPI via event_id (lead_uuid)
+    // lead_uuid + ViewContent com dedupe
     const lead_uuid = uuidShort();
-    fbq('track', 'ViewContent', { content_category: 'telegram_bridge' }, { eventID: lead_uuid });
 
-    // montar URL final do redirector (backend vai salvar lead e redirecionar pro bot)
+    function fbReady(){ return typeof fbq === 'function' && fbq.callMethod; }
+
+    (async () => {
+      // Animação de progresso e countdown
+      const steps = 28; // animação suave
+      let elapsed = 0;
+      const start = Date.now();
+      const tick = setInterval(()=>{
+        const t = Date.now() - start;
+        const p = Math.min(1, t / AUTO_DELAY_MS);
+        bar.style.width = (p*100).toFixed(1) + '%';
+        const secs = Math.max(0, Math.ceil((AUTO_DELAY_MS - t)/1000));
+        secondsEl.textContent = secs.toString();
+      }, 1000/30);
+
+      // Espera o fbq ficar pronto OU atinge metade do tempo
+      let waited = 0;
+      while(!fbReady() && waited < AUTO_DELAY_MS * 0.5){
+        await sleep(100);
+        waited += 100;
+      }
+
+      // Dispara PageView já foi, agora ViewContent com eventID
+      try {
+        if (fbReady()) {
+          stageTxt.textContent = 'Validando campanha…';
+          fbq('track', 'ViewContent', { content_category: 'telegram_bridge' }, { eventID: lead_uuid });
+        }
+      } catch(e) { /* ignora */ }
+
+      // Garante o tempo mínimo total
+      const remain = AUTO_DELAY_MS - (Date.now() - start);
+      if (remain > 0) await sleep(remain);
+
+      clearInterval(tick);
+      bar.style.width = '100%';
+      secondsEl.textContent = '0';
+      btnIr.disabled = false;
+      stageTxt.textContent = 'Tudo pronto! Você pode seguir para o Telegram.';
+    })();
+
+    // Monta URL do redirector
     const redirectUrl = `${REDIRECTOR}?${toQuery({ ...payload, lead_uuid })}`;
-
-    // UI
-    const debug = document.getElementById('debug');
     debug.textContent = redirectUrl;
 
     async function go(){
-      try {
-        // Abre o redirector (ele salvará o lead, disparará CAPI e redirecionará para o bot)
-        location.href = redirectUrl;
-      } catch (e) {
-        console.error(e);
-        location.href = BOT_FALLBACK + `?start=lead_${lead_uuid}`;
-      }
+      try { location.href = redirectUrl; }
+      catch (e) { location.href = BOT_FALLBACK + `?start=lead_${lead_uuid}`; }
     }
 
     document.getElementById('btn-ir').addEventListener('click', go);
@@ -122,8 +171,8 @@
       try { await navigator.clipboard.writeText(redirectUrl); } catch(e){}
     });
 
-    // Auto-redirect após 1.8s (permite o Pixel carregar primeiro)
-    setTimeout(go, 1800);
+    // Auto-redirect logo que liberar o botão
+    setTimeout(()=>{ if (!btnIr.disabled) go(); }, AUTO_DELAY_MS + 200);
   </script>
 </body>
 </html>
