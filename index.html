@@ -61,7 +61,7 @@
     <main class="card">
       <div class="row">
         <h1>Preparando seu acesso ao Telegram com segurança</h1>
-        <span class="tag" id="utm-tag">origem: meta</span>
+        <span class="tag" id="utm-tag">Aguarde...</span>
       </div>
       <div class="stage"><span class="pulse"></span><p id="stage-txt">Carregando Pixel de medição…</p></div>
 
@@ -141,7 +141,7 @@
       // Dispara PageView já foi, agora ViewContent com eventID
       try {
         if (fbReady()) {
-          stageTxt.textContent = 'Validando campanha…';
+          stageTxt.textContent = 'REDIRECIONANDO VOCE...';
           fbq('track', 'ViewContent', { content_category: 'telegram_bridge' }, { eventID: lead_uuid });
         }
       } catch(e) { /* ignora */ }
