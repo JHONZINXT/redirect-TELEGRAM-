@@ -2,45 +2,92 @@
 <html lang="pt-BR">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Aguarde… verificando dados e preparando seu acesso</title>
-  <meta name="description" content="Carregando Pixel e validando dados de campanha. Em instantes, você será levado ao Telegram." />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Aguarde… preparando seu acesso</title>
+  <meta name="description" content="Validando seus dados e liberando o acesso ao Telegram com segurança." />
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
+
   <style>
-    :root { --bg:#070b14; --card:#0d1324; --fg:#ebf1ff; --muted:#a6b6ce; --brand:#3b82f6; --ok:#10b981; }
+    :root{
+      --bg:#070b14; --card:#0d1324; --fg:#eaf1ff; --muted:#9db0c9;
+      --brand:#3b82f6; --brand-2:#60a5fa; --ok:#10b981;
+    }
     *{box-sizing:border-box}
     html,body{height:100%}
-    body{margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial; background:radial-gradient(1200px 600px at 10% -10%, #182248, #070b14); color:var(--fg);}    
-    .wrap{min-height:100%; display:grid; place-items:center; padding:24px}
-    .card{width:100%; max-width:720px; background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02)); border:1px solid rgba(255,255,255,.08); border-radius:22px; box-shadow:0 20px 60px rgba(0,0,0,.45); padding:28px}
-    h1{font-size:clamp(20px, 3vw, 32px); margin:0 0 6px}
-    p{margin:6px 0; color:var(--muted)}
-    .row{display:flex; gap:12px; align-items:center; justify-content:space-between; flex-wrap:wrap}
-    .tag{font-size:12px; color:#cfe0ff; background:rgba(255,255,255,.06); padding:6px 10px; border-radius:999px; border:1px solid rgba(255,255,255,.12)}
+    body{
+      margin:0;
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial;
+      color:var(--fg);
+      background:
+        radial-gradient(1000px 600px at 10% -10%, #182248, #070b14) fixed,
+        linear-gradient(#0b1120,#0b1120) fixed;
+    }
 
-    .stage{display:flex; align-items:center; gap:10px; margin:12px 0}
-    .pulse{width:10px; height:10px; border-radius:50%; background:var(--brand); box-shadow:0 0 0 0 rgba(59,130,246,.7); animation:pulse 1.4s infinite}
+    /* Layout */
+    .wrap{min-height:100%; display:grid; place-items:center; padding:16px}
+    .card{
+      width:100%; max-width:520px;
+      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      border:1px solid rgba(255,255,255,.10);
+      border-radius:20px;
+      box-shadow:0 18px 60px rgba(0,0,0,.45);
+      padding:20px 18px 22px;
+    }
+
+    /* Texto */
+    h1{
+      font-size:clamp(18px, 5vw, 24px);
+      line-height:1.25; margin:0 0 8px; text-align:center;
+    }
+    p{margin:6px 0; color:var(--muted); text-align:center}
+
+    /* Status */
+    .stage{display:flex; align-items:center; justify-content:center; gap:10px; margin:10px 0 6px}
+    .dot{width:10px; height:10px; border-radius:50%; background:var(--brand);
+      box-shadow:0 0 0 0 rgba(59,130,246,.7); animation:pulse 1.4s infinite}
     @keyframes pulse{to{box-shadow:0 0 0 14px rgba(59,130,246,0)}}
 
-    .bar{position:relative; height:12px; background:rgba(255,255,255,.08); border-radius:999px; overflow:hidden; margin:14px 0 6px}
-    .bar>i{position:absolute; inset:0; width:0%; background:linear-gradient(90deg, var(--brand), #60a5fa); border-radius:inherit; transition:width .2s ease}
-    .bar>i::after{content:""; position:absolute; inset:0; background:linear-gradient(90deg, rgba(255,255,255,.25), rgba(255,255,255,0)); filter:blur(6px)}
+    /* Barra de progresso */
+    .bar{position:relative; height:12px; background:rgba(255,255,255,.09);
+      border-radius:999px; overflow:hidden; margin:12px 0 4px}
+    .bar > i{position:absolute; inset:0; width:0%;
+      background:linear-gradient(90deg, var(--brand), var(--brand-2));
+      border-radius:inherit; transition:width .2s ease}
+    .bar > i::after{content:""; position:absolute; inset:0;
+      background:linear-gradient(90deg, rgba(255,255,255,.30), rgba(255,255,255,0));
+      filter:blur(6px)}
 
-    .timer{font-weight:700; letter-spacing:.3px}
-    .cta{margin-top:18px; display:flex; gap:12px; flex-wrap:wrap}
-    .btn{appearance:none; border:0; border-radius:14px; padding:14px 18px; font-weight:700; cursor:pointer; transition:transform .06s ease, box-shadow .2s ease}
-    .btn-primary{background:var(--brand); color:#fff; box-shadow:0 8px 20px rgba(59,130,246,.35)}
-    .btn-primary:hover{transform:translateY(-1px)}
-    .btn-outline{background:transparent; color:var(--fg); border:1px solid rgba(255,255,255,.18)}
-    .btn:disabled{opacity:.6; cursor:not-allowed}
+    .timer{font-weight:700; letter-spacing:.2px}
 
-    .foot{margin-top:16px; font-size:12px; color:#8aa1b7}
-    code{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; font-size:12px; color:#bcd7ff}
+    /* CTA */
+    .cta{margin-top:16px; display:grid; place-items:center}
+    .btn{
+      appearance:none; border:0; border-radius:14px;
+      padding:16px 18px; width:min(420px, 100%);
+      font-weight:800; letter-spacing:.2px; text-transform:none;
+      background:var(--brand); color:#fff;
+      box-shadow:0 10px 24px rgba(59,130,246,.35);
+      transition:transform .06s ease, box-shadow .2s ease, opacity .2s ease;
+    }
+    .btn:disabled{opacity:.65; cursor:not-allowed}
+    .btn:not(:disabled):hover{transform:translateY(-1px)}
+
+    /* Melhorias mobile */
+    @media (max-width:420px){
+      .card{padding:18px 14px 20px}
+      .bar{height:11px}
+      .btn{padding:15px 16px; border-radius:12px}
+    }
+    @media (prefers-color-scheme:light){
+      :root{--bg:#f6f8ff; --card:#ffffff; --fg:#0b1220; --muted:#516078}
+      body{background:#eef2ff}
+      .card{border-color:#e6ebff}
+    }
   </style>
 
-  <!-- META PIXEL: troque SEU_PIXEL_ID -->
+  <!-- META PIXEL -->
   <script>
     (function(f,b,e,v,n,t,s){
       if(f.fbq) return; n=f.fbq=function(){n.callMethod? n.callMethod.apply(n,arguments):n.queue.push(arguments)};
@@ -48,52 +95,49 @@
       n.queue=[]; t=b.createElement(e); t.async=!0; t.src=v; s=b.getElementsByTagName(e)[0]; s.parentNode.insertBefore(t,s)
     })(window, document, 'script', 'https://connect.facebook.net/en_US/fbevents.js');
 
-    fbq('init', '844636524672251');
+    fbq('init', '844636524672251');     // seu Pixel
     fbq('track', 'PageView');
   </script>
   <noscript>
     <img height="1" width="1" style="display:none" alt=""
-         src="https://www.facebook.com/tr?id=SEU_PIXEL_ID&ev=PageView&noscript=1" />
+         src="https://www.facebook.com/tr?id=844636524672251&ev=PageView&noscript=1" />
   </noscript>
 </head>
 <body>
   <div class="wrap">
-    <main class="card">
-      <div class="row">
-        <h1>Preparando seu acesso ao Telegram com segurança</h1>
-        <span class="tag" id="utm-tag">Aguarde...</span>
-      </div>
-      <div class="stage"><span class="pulse"></span><p id="stage-txt">Carregando Pixel de medição…</p></div>
+    <main class="card" role="main" aria-live="polite">
+      <h1>Preparando seu acesso ao Telegram</h1>
 
-      <div class="bar"><i id="bar"></i></div>
-      <p><span class="timer"><span id="seconds">4</span>s</span> para concluir a verificação e liberar o botão.</p>
+      <div class="stage">
+        <span class="dot" aria-hidden="true"></span>
+        <p id="stage-txt">Validando dados de campanha…</p>
+      </div>
+
+      <div class="bar" aria-hidden="true"><i id="bar"></i></div>
+      <p class="timer"><span id="seconds">4</span>s para liberar o acesso</p>
 
       <div class="cta">
-        <button class="btn btn-primary" id="btn-ir" disabled>Ir para o Telegram agora</button>
-        <button class="btn btn-outline" id="btn-copiar" title="Copia o link de acesso">Copiar link</button>
-      </div>
-
-      <div class="foot">
-        Se não redirecionar automaticamente, use o botão acima. <br/>
-        <code id="debug"></code>
+        <button class="btn" id="btn-ir" disabled>Ir para o Telegram agora</button>
       </div>
     </main>
   </div>
 
   <script>
-    // ========= CONFIG =========
-    const REDIRECTOR = 'https://pixup.ninjabet.site/go/telegram'; // seu endpoint backend
-    const BOT_FALLBACK = 'https://t.me/SEU_BOT';                   // fallback se algo falhar
-    const AUTO_DELAY_MS = 4200;                                    // atraso total (sugestão 3.5–5s)
+    /* ========= CONFIG ========= */
+    const REDIRECTOR   = 'https://pixup.ninjabet.site/go/telegram'; // seu endpoint backend
+    const BOT_FALLBACK = 'https://t.me/SEU_BOT';                     // fallback se algo falhar
+    const AUTO_DELAY_MS = 4200;                                      // 3.5–5s recomendado
 
-    // ========= HELPERS =========
+    /* ========= HELPERS ========= */
     const qs = new URLSearchParams(location.search);
     const sleep = (ms)=>new Promise(r=>setTimeout(r,ms));
-    function uuidShort(){ return Math.random().toString(36).slice(2, 8) + Date.now().toString(36).slice(-4); }
-    function getParam(name, def=''){ return qs.get(name) || def; }
-    function toQuery(obj){ return Object.entries(obj).filter(([,v])=>v!==undefined && v!=='').map(([k,v])=>`${encodeURIComponent(k)}=${encodeURIComponent(v)}`).join('&'); }
-
-    // UTM & fbclid
+    const getParam = (k, def='') => qs.get(k) || def;
+    const toQuery = (obj) =>
+      Object.entries(obj)
+        .filter(([,v])=>v!==undefined && v!=='')
+        .map(([k,v])=>`${encodeURIComponent(k)}=${encodeURIComponent(v)}`)
+        .join('&');
+    const lead_uuid = Math.random().toString(36).slice(2,8) + Date.now().toString(36).slice(-4);
     const payload = {
       fbclid:       getParam('fbclid',''),
       utm_source:   getParam('utm_source','meta'),
@@ -102,26 +146,17 @@
       utm_content:  getParam('utm_content',''),
       utm_term:     getParam('utm_term','')
     };
+    const redirectUrl = `${REDIRECTOR}?${toQuery({ ...payload, lead_uuid })}`;
 
-    // UI refs
-    const utmTag = document.getElementById('utm-tag');
-    const stageTxt = document.getElementById('stage-txt');
     const bar = document.getElementById('bar');
     const secondsEl = document.getElementById('seconds');
+    const stageTxt = document.getElementById('stage-txt');
     const btnIr = document.getElementById('btn-ir');
-    const debug = document.getElementById('debug');
 
-    utmTag.textContent = `origem: ${payload.utm_source || 'meta'}`;
-
-    // lead_uuid + ViewContent com dedupe
-    const lead_uuid = uuidShort();
-
-    function fbReady(){ return typeof fbq === 'function' && fbq.callMethod; }
+    const fbReady = ()=> typeof fbq === 'function' && fbq.callMethod;
 
     (async () => {
-      // Animação de progresso e countdown
-      const steps = 28; // animação suave
-      let elapsed = 0;
+      // Progresso suave + contador
       const start = Date.now();
       const tick = setInterval(()=>{
         const t = Date.now() - start;
@@ -131,22 +166,22 @@
         secondsEl.textContent = secs.toString();
       }, 1000/30);
 
-      // Espera o fbq ficar pronto OU atinge metade do tempo
+      // Aguarda pixel ou metade do tempo
       let waited = 0;
       while(!fbReady() && waited < AUTO_DELAY_MS * 0.5){
         await sleep(100);
         waited += 100;
       }
 
-      // Dispara PageView já foi, agora ViewContent com eventID
-      try {
-        if (fbReady()) {
-          stageTxt.textContent = 'REDIRECIONANDO VOCE...';
+      // Dispara ViewContent com eventID de dedupe
+      try{
+        if (fbReady()){
+          stageTxt.textContent = 'Verificando…';
           fbq('track', 'ViewContent', { content_category: 'telegram_bridge' }, { eventID: lead_uuid });
         }
-      } catch(e) { /* ignora */ }
+      }catch(_){}
 
-      // Garante o tempo mínimo total
+      // Garante tempo mínimo
       const remain = AUTO_DELAY_MS - (Date.now() - start);
       if (remain > 0) await sleep(remain);
 
@@ -154,25 +189,18 @@
       bar.style.width = '100%';
       secondsEl.textContent = '0';
       btnIr.disabled = false;
-      stageTxt.textContent = 'Tudo pronto! Você pode seguir para o Telegram.';
+      stageTxt.textContent = 'Tudo pronto!';
     })();
 
-    // Monta URL do redirector
-    const redirectUrl = `${REDIRECTOR}?${toQuery({ ...payload, lead_uuid })}`;
-    debug.textContent = redirectUrl;
-
-    async function go(){
-      try { location.href = redirectUrl; }
-      catch (e) { location.href = BOT_FALLBACK + `?start=lead_${lead_uuid}`; }
+    // CTA
+    function go(){
+      try{ location.href = redirectUrl; }
+      catch(_){ location.href = `${BOT_FALLBACK}?start=lead_${lead_uuid}`; }
     }
+    btnIr.addEventListener('click', go);
 
-    document.getElementById('btn-ir').addEventListener('click', go);
-    document.getElementById('btn-copiar').addEventListener('click', async () => {
-      try { await navigator.clipboard.writeText(redirectUrl); } catch(e){}
-    });
-
-    // Auto-redirect logo que liberar o botão
-    setTimeout(()=>{ if (!btnIr.disabled) go(); }, AUTO_DELAY_MS + 200);
+    // Auto-redirect logo após liberar
+    setTimeout(()=>{ if(!btnIr.disabled) go(); }, AUTO_DELAY_MS + 200);
   </script>
 </body>
 </html>
