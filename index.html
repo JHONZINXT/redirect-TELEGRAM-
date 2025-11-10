@@ -145,8 +145,12 @@
     let lead_uuid = getCookie('_eid');
     if (!lead_uuid) { lead_uuid = mkId(); setCookie('_eid', lead_uuid); }
 
+    // lê o _fbp do navegador (cookie do Pixel)
+    const fbpCookie = getCookie('_fbp');   // usa seu helper já definido acima
+
     const payload = {
       fbclid:       getParam('fbclid',''),
+      fbp:          fbpCookie,             // << adicionamos o fbp aqui
       utm_source:   getParam('utm_source','meta'),
       utm_medium:   getParam('utm_medium','paid'),
       utm_campaign: getParam('utm_campaign',''),
