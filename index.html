@@ -124,20 +124,27 @@
 
   <script>
     /* ========= CONFIG ========= */
-    const REDIRECTOR   = 'https://pixup.ninjabet.site/go/telegram'; // seu endpoint backend
-    const BOT_FALLBACK = 'https://t.me/SEU_BOT';                     // fallback se algo falhar
-    const AUTO_DELAY_MS = 4200;                                      // 3.5–5s recomendado
+    const REDIRECTOR   = 'https://pixup.ninjabet.site/go/telegram';
+    const BOT_FALLBACK = 'https://t.me/SEU_BOT';
+    const AUTO_DELAY_MS = 4200;
 
     /* ========= HELPERS ========= */
     const qs = new URLSearchParams(location.search);
     const sleep = (ms)=>new Promise(r=>setTimeout(r,ms));
     const getParam = (k, def='') => qs.get(k) || def;
-    const toQuery = (obj) =>
-      Object.entries(obj)
-        .filter(([,v])=>v!==undefined && v!=='')
-        .map(([k,v])=>`${encodeURIComponent(k)}=${encodeURIComponent(v)}`)
-        .join('&');
-    const lead_uuid = Math.random().toString(36).slice(2,8) + Date.now().toString(36).slice(-4);
+
+    // --- cookie helpers (1P) ---
+    const getCookie = (k) => document.cookie.split('; ').find(x=>x.startsWith(k+'='))?.split('=')[1] || '';
+    const setCookie = (k,v,maxDays=14) => {
+      const d = new Date(Date.now() + maxDays*864e5).toUTCString();
+      document.cookie = `${k}=${v}; path=/; expires=${d}; SameSite=Lax`;
+    };
+
+    // --- gera ou reaproveita um eventID estável ---
+    const mkId = () => Math.random().toString(36).slice(2,8) + Date.now().toString(36).slice(-4);
+    let lead_uuid = getCookie('_eid');
+    if (!lead_uuid) { lead_uuid = mkId(); setCookie('_eid', lead_uuid); }
+
     const payload = {
       fbclid:       getParam('fbclid',''),
       utm_source:   getParam('utm_source','meta'),
@@ -146,6 +153,13 @@
       utm_content:  getParam('utm_content',''),
       utm_term:     getParam('utm_term','')
     };
+    const toQuery = (obj) =>
+      Object.entries(obj)
+        .filter(([,v])=>v!==undefined && v!=='')
+        .map(([k,v])=>`${encodeURIComponent(k)}=${encodeURIComponent(v)}`)
+        .join('&');
+
+    // 🔑 lead_uuid fixo usado no Pixel e backend
     const redirectUrl = `${REDIRECTOR}?${toQuery({ ...payload, lead_uuid })}`;
 
     const bar = document.getElementById('bar');
