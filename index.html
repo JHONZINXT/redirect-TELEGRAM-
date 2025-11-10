@@ -122,103 +122,114 @@
     </main>
   </div>
 
-  <script>
-    /* ========= CONFIG ========= */
-    const REDIRECTOR   = 'https://pixup.ninjabet.site/go/telegram';
-    const BOT_FALLBACK = 'https://t.me/SEU_BOT';
-    const AUTO_DELAY_MS = 4200;
+<script>
+  /* ========= CONFIG ========= */
+  const REDIRECTOR   = 'https://pixup.ninjabet.site/go/telegram';
+  const BOT_FALLBACK = 'https://t.me/SEU_BOT';
+  const AUTO_DELAY_MS = 4200;
 
-    /* ========= HELPERS ========= */
-    const qs = new URLSearchParams(location.search);
-    const sleep = (ms)=>new Promise(r=>setTimeout(r,ms));
-    const getParam = (k, def='') => qs.get(k) || def;
+  /* ========= HELPERS ========= */
+  const qs = new URLSearchParams(location.search);
+  const sleep = (ms)=>new Promise(r=>setTimeout(r,ms));
+  const getParam = (k, def='') => qs.get(k) || def;
 
-    // --- cookie helpers (1P) ---
-    const getCookie = (k) => document.cookie.split('; ').find(x=>x.startsWith(k+'='))?.split('=')[1] || '';
-    const setCookie = (k,v,maxDays=14) => {
-      const d = new Date(Date.now() + maxDays*864e5).toUTCString();
-      document.cookie = `${k}=${v}; path=/; expires=${d}; SameSite=Lax`;
-    };
+  // --- cookie helpers (1P) ---
+  const getCookie = (k) => document.cookie.split('; ').find(x=>x.startsWith(k+'='))?.split('=')[1] || '';
+  const setCookie = (k,v,maxDays=14) => {
+    const d = new Date(Date.now() + maxDays*864e5).toUTCString();
+    document.cookie = `${k}=${v}; path=/; expires=${d}; SameSite=Lax`;
+  };
 
-    // --- gera ou reaproveita um eventID estável ---
-    const mkId = () => Math.random().toString(36).slice(2,8) + Date.now().toString(36).slice(-4);
-    let lead_uuid = getCookie('_eid');
-    if (!lead_uuid) { lead_uuid = mkId(); setCookie('_eid', lead_uuid); }
+  // --- gera ou reaproveita um eventID estável ---
+  const mkId = () => Math.random().toString(36).slice(2,8) + Date.now().toString(36).slice(-4);
+  let lead_uuid = getCookie('_eid');
+  if (!lead_uuid) { lead_uuid = mkId(); setCookie('_eid', lead_uuid); }
 
-    // lê o _fbp do navegador (cookie do Pixel)
-    const fbpCookie = getCookie('_fbp');   // usa seu helper já definido acima
+  // lê o _fbp do navegador (cookie do Pixel)
+  const fbpCookie = getCookie('_fbp');
 
-    const payload = {
-      fbclid:       getParam('fbclid',''),
-      fbp:          fbpCookie,             // << adicionamos o fbp aqui
-      utm_source:   getParam('utm_source','meta'),
-      utm_medium:   getParam('utm_medium','paid'),
-      utm_campaign: getParam('utm_campaign',''),
-      utm_content:  getParam('utm_content',''),
-      utm_term:     getParam('utm_term','')
-    };
-    const toQuery = (obj) =>
-      Object.entries(obj)
-        .filter(([,v])=>v!==undefined && v!=='')
-        .map(([k,v])=>`${encodeURIComponent(k)}=${encodeURIComponent(v)}`)
-        .join('&');
+  const payload = {
+    fbclid:       getParam('fbclid',''),
+    fbp:          fbpCookie,
+    utm_source:   getParam('utm_source','meta'),
+    utm_medium:   getParam('utm_medium','paid'),
+    utm_campaign: getParam('utm_campaign',''),
+    utm_content:  getParam('utm_content',''),
+    utm_term:     getParam('utm_term','')
+  };
+  const toQuery = (obj) =>
+    Object.entries(obj)
+      .filter(([,v])=>v!==undefined && v!=='')
+      .map(([k,v])=>`${encodeURIComponent(k)}=${encodeURIComponent(v)}`)
+      .join('&');
 
-    // 🔑 lead_uuid fixo usado no Pixel e backend
-    const redirectUrl = `${REDIRECTOR}?${toQuery({ ...payload, lead_uuid })}`;
+  // 🔥 NOVO: vamos definir redirectUrl depois de buscar o IP
+  let redirectUrl = `${REDIRECTOR}?${toQuery({ ...payload, lead_uuid })}`;
 
-    const bar = document.getElementById('bar');
-    const secondsEl = document.getElementById('seconds');
-    const stageTxt = document.getElementById('stage-txt');
-    const btnIr = document.getElementById('btn-ir');
+  const bar = document.getElementById('bar');
+  const secondsEl = document.getElementById('seconds');
+  const stageTxt = document.getElementById('stage-txt');
+  const btnIr = document.getElementById('btn-ir');
 
-    const fbReady = ()=> typeof fbq === 'function' && fbq.callMethod;
+  const fbReady = ()=> typeof fbq === 'function' && fbq.callMethod;
 
-    (async () => {
-      // Progresso suave + contador
-      const start = Date.now();
-      const tick = setInterval(()=>{
-        const t = Date.now() - start;
-        const p = Math.min(1, t / AUTO_DELAY_MS);
-        bar.style.width = (p*100).toFixed(1) + '%';
-        const secs = Math.max(0, Math.ceil((AUTO_DELAY_MS - t)/1000));
-        secondsEl.textContent = secs.toString();
-      }, 1000/30);
+  (async () => {
+    // 🔥 NOVO: tenta obter o IP visto pelo backend para enviar como fbi
+    let fbi = '';
+    try {
+      const r = await fetch('https://pixup.ninjabet.site/api/ip', { method: 'GET' });
+      const j = await r.json();
+      if (j?.ip) fbi = j.ip;
+    } catch (_) {}
 
-      // Aguarda pixel ou metade do tempo
-      let waited = 0;
-      while(!fbReady() && waited < AUTO_DELAY_MS * 0.5){
-        await sleep(100);
-        waited += 100;
-      }
+    // após obter o IP (se existir), montamos a URL final com fbi
+    redirectUrl = `${REDIRECTOR}?${toQuery({ ...payload, lead_uuid, fbi })}`;
 
-      // Dispara ViewContent com eventID de dedupe
-      try{
-        if (fbReady()){
-          stageTxt.textContent = 'Verificando…';
-          fbq('track', 'ViewContent', { content_category: 'telegram_bridge' }, { eventID: lead_uuid });
-        }
-      }catch(_){}
+    // Progresso suave + contador
+    const start = Date.now();
+    const tick = setInterval(()=>{
+      const t = Date.now() - start;
+      const p = Math.min(1, t / AUTO_DELAY_MS);
+      bar.style.width = (p*100).toFixed(1) + '%';
+      const secs = Math.max(0, Math.ceil((AUTO_DELAY_MS - t)/1000));
+      secondsEl.textContent = secs.toString();
+    }, 1000/30);
 
-      // Garante tempo mínimo
-      const remain = AUTO_DELAY_MS - (Date.now() - start);
-      if (remain > 0) await sleep(remain);
-
-      clearInterval(tick);
-      bar.style.width = '100%';
-      secondsEl.textContent = '0';
-      btnIr.disabled = false;
-      stageTxt.textContent = 'Tudo pronto!';
-    })();
-
-    // CTA
-    function go(){
-      try{ location.href = redirectUrl; }
-      catch(_){ location.href = `${BOT_FALLBACK}?start=lead_${lead_uuid}`; }
+    // Aguarda pixel ou metade do tempo
+    let waited = 0;
+    while(!fbReady() && waited < AUTO_DELAY_MS * 0.5){
+      await sleep(100);
+      waited += 100;
     }
-    btnIr.addEventListener('click', go);
 
-    // Auto-redirect logo após liberar
-    setTimeout(()=>{ if(!btnIr.disabled) go(); }, AUTO_DELAY_MS + 200);
-  </script>
+    // Dispara ViewContent com eventID de dedupe
+    try{
+      if (fbReady()){
+        stageTxt.textContent = 'Verificando…';
+        fbq('track', 'ViewContent', { content_category: 'telegram_bridge' }, { eventID: lead_uuid });
+      }
+    }catch(_){}
+
+    // Garante tempo mínimo
+    const remain = AUTO_DELAY_MS - (Date.now() - start);
+    if (remain > 0) await sleep(remain);
+
+    clearInterval(tick);
+    bar.style.width = '100%';
+    secondsEl.textContent = '0';
+    btnIr.disabled = false;
+    stageTxt.textContent = 'Tudo pronto!';
+  })();
+
+  // CTA
+  function go(){
+    try{ location.href = redirectUrl; }
+    catch(_){ location.href = `${BOT_FALLBACK}?start=lead_${lead_uuid}`; }
+  }
+  btnIr.addEventListener('click', go);
+
+  // Auto-redirect logo após liberar
+  setTimeout(()=>{ if(!btnIr.disabled) go(); }, AUTO_DELAY_MS + 200);
+</script>
 </body>
 </html>
