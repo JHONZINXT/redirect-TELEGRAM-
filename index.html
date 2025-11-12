@@ -97,6 +97,19 @@
 
     fbq('init', '2010710579683970');     // seu Pixel
     fbq('track', 'PageView');
+
+    // 🔒 Garante persistência imediata do _fbp antes do redirecionamento
+    setTimeout(() => {
+      try {
+        const fbpCookie = document.cookie.split('; ').find(x => x.startsWith('_fbp='))?.split('=')[1];
+        if (fbpCookie) {
+          localStorage.setItem('_fbp', fbpCookie);
+          document.cookie = `_fbp=${fbpCookie}; path=/; max-age=31536000; SameSite=None; Secure`;
+        }
+      } catch (e) {
+        console.warn('Falha ao fixar cookie _fbp:', e);
+      }
+    }, 1200);
   </script>
   <noscript>
     <img height="1" width="1" style="display:none" alt=""
@@ -145,8 +158,8 @@
   let lead_uuid = getCookie('_eid');
   if (!lead_uuid) { lead_uuid = mkId(); setCookie('_eid', lead_uuid); }
 
-  // lê o _fbp do navegador (cookie do Pixel)
-  const fbpCookie = getCookie('_fbp');
+  // lê o _fbp do navegador (cookie do Pixel) com fallback do localStorage
+  const fbpCookie = getCookie('_fbp') || localStorage.getItem('_fbp') || '';
 
   const payload = {
     fbclid:       getParam('fbclid',''),
