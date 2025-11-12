@@ -242,6 +242,8 @@
     secondsEl.textContent = '0';
     btnIr.disabled = false;
     stageTxt.textContent = 'Tudo pronto!';
+        // Auto-redirect agendado somente após liberar o botão
+    setTimeout(() => { go(); }, 250);
   })();
 
   // CTA
@@ -250,9 +252,6 @@
     catch(_){ location.href = `${BOT_FALLBACK}?start=lead_${lead_uuid}`; }
   }
   btnIr.addEventListener('click', go);
-
-  // Auto-redirect logo após liberar
-  setTimeout(()=>{ if(!btnIr.disabled) go(); }, AUTO_DELAY_MS + 200);
 </script>
 </body>
 </html>
