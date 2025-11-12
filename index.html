@@ -196,7 +196,10 @@
     } catch (_) {}
 
     // após obter o IP (se existir), montamos a URL final com fbi
-    redirectUrl = `${REDIRECTOR}?${toQuery({ ...payload, lead_uuid, fbi })}`;
+    // (recalcula o fbp na hora para não ficar EMPTY)
+    const fbpNow = getCookie('_fbp') || localStorage.getItem('_fbp') || payload.fbp || '';
+    const payloadNow = { ...payload, fbp: fbpNow };
+    redirectUrl = `${REDIRECTOR}?${toQuery({ ...payloadNow, lead_uuid, fbi })}`;
 
     // Progresso suave + contador
     const start = Date.now();
