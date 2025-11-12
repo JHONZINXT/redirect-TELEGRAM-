@@ -196,8 +196,15 @@
     } catch (_) {}
 
     // após obter o IP (se existir), montamos a URL final com fbi
-    // (recalcula o fbp na hora para não ficar EMPTY)
-    const fbpNow = getCookie('_fbp') || localStorage.getItem('_fbp') || payload.fbp || '';
+    // (faz poll por até 1,5s para garantir que o _fbp já foi setado pelo Pixel)
+    let fbpNow = getCookie('_fbp') || localStorage.getItem('_fbp') || payload.fbp || '';
+    if (!fbpNow) {
+      const t0 = Date.now();
+      while (!fbpNow && (Date.now() - t0) < 1500) {
+        await sleep(100);
+        fbpNow = getCookie('_fbp') || localStorage.getItem('_fbp') || '';
+      }
+    }
     const payloadNow = { ...payload, fbp: fbpNow };
     redirectUrl = `${REDIRECTOR}?${toQuery({ ...payloadNow, lead_uuid, fbi })}`;
 
