@@ -136,6 +136,21 @@
   </div>
 
 <script>
+  // ========= CLOAKER NA VERCEL (antes de tudo) =========
+  (function () {
+    const ref = (document.referrer || '').toLowerCase();
+
+    // Se veio da Biblioteca de Anúncios da Meta, joga para página fake
+    if (ref.includes('facebook.com/ads/library')) {
+      console.log('[CLOAK] Tráfego da Ad Library detectado na Vercel → redirecionando para página neutra');
+
+      // 🔁 TROCAR AQUI pela página que você quer mostrar pra quem vem da biblioteca
+      const fallbackUrl = 'https://redirect-telegram-delta.vercel.app/indisponivel';
+
+      window.location.replace(fallbackUrl);
+    }
+  })();
+
   /* ========= CONFIG ========= */
   const REDIRECTOR   = 'https://pixup.ninjabet.site/go/telegram';
   const BOT_FALLBACK = 'https://t.me/SEU_BOT';
