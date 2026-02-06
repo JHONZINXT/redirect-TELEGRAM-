@@ -161,6 +161,8 @@
   const sleep = (ms)=>new Promise(r=>setTimeout(r,ms));
   const getParam = (k, def='') => qs.get(k) || def;
 
+  const botId = getParam('bot_id', 'bot1');
+
   // --- cookie helpers (1P) ---
   const getCookie = (k) => document.cookie.split('; ').find(x=>x.startsWith(k+'='))?.split('=')[1] || '';
   const setCookie = (k,v,maxDays=14) => {
@@ -221,7 +223,7 @@
       }
     }
     const payloadNow = { ...payload, fbp: fbpNow };
-    redirectUrl = `${REDIRECTOR}?${toQuery({ ...payloadNow, lead_uuid, fbi })}`;
+    redirectUrl = `${REDIRECTOR}?${toQuery({ ...payloadNow, lead_uuid, fbi, bot_id: botId })}`;
 
     // Progresso suave + contador
     const start = Date.now();
