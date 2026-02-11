@@ -243,9 +243,9 @@
       !!getParam('utm_content','') ||
       !!getParam('utm_term','');
 
-    const hasFbp = !!fbpNow;
-
-    const looksLikeAdTraffic = hasFbclid || hasUtm || hasFbp;
+    // ✅ Importante: NÃO usar _fbp como “sinal de anúncio”
+    // porque ele pode ser criado até em acesso direto.
+    const looksLikeAdTraffic = hasFbclid || hasUtm;
 
     // Se NÃO parece tráfego real de anúncio → fallback (sem quebrar cliques reais)
     if (!looksLikeAdTraffic) {
