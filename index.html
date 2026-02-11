@@ -139,35 +139,32 @@
   // ========= CLOAKER NA VERCEL (antes de tudo) =========
   (function () {
     const ref = (document.referrer || '').toLowerCase();
-    const qs  = new URLSearchParams(location.search);
+    const qs0 = new URLSearchParams(location.search);
 
-    const fbclid = qs.get('fbclid');
-    const utm =
-      qs.get('utm_source') ||
-      qs.get('utm_medium') ||
-      qs.get('utm_campaign') ||
-      qs.get('utm_content') ||
-      qs.get('utm_term');
+    const fbclid0 = qs0.get('fbclid');
+    const utm0 =
+      qs0.get('utm_source') ||
+      qs0.get('utm_medium') ||
+      qs0.get('utm_campaign') ||
+      qs0.get('utm_content') ||
+      qs0.get('utm_term');
 
-    const fbpCookie = document.cookie.includes('_fbp=');
+    const fbpCookie0 = document.cookie.includes('_fbp=');
 
-    const looksLikeAdTraffic = fbclid || utm || fbpCookie;
+    const looksLikeAdTraffic0 = fbclid0 || utm0 || fbpCookie0;
 
     // Se veio da Biblioteca de Anúncios da Meta, joga para página fake
     // (só quando NÃO parece tráfego real de anúncio)
-    if (ref.includes('facebook.com/ads/library') && !looksLikeAdTraffic) {
+    if (ref.includes('facebook.com/ads/library') && !looksLikeAdTraffic0) {
       console.log('[CLOAK] Tráfego da Ad Library (sem sinais de anúncio) → redirecionando para página neutra');
-
-      // 🔁 TROCAR AQUI pela página que você quer mostrar pra quem vem da biblioteca
       const fallbackUrl = 'https://t.me/anajuliaoficial_bot';
-
       window.location.replace(fallbackUrl);
     }
   })();
 
   /* ========= CONFIG ========= */
-  const REDIRECTOR   = 'https://pixup.ninjabet.site/go/telegram';
-  const BOT_FALLBACK = 'https://t.me/SEU_BOT';
+  const REDIRECTOR    = 'https://pixup.ninjabet.site/go/telegram';
+  const BOT_FALLBACK  = 'https://t.me/SEU_BOT';
   const AUTO_DELAY_MS = 4200;
 
   /* ========= HELPERS ========= */
@@ -175,39 +172,14 @@
   const sleep = (ms)=>new Promise(r=>setTimeout(r,ms));
   const getParam = (k, def='') => qs.get(k) || def;
 
-  const botId = getParam('bot_id', 'bot1');
-
-  // ========= FILTRO DE TRÁFEGO (ANTI-CLONE) =========
-  const getCookie = (k) =>
-    document.cookie.split('; ').find(x => x.startsWith(k + '='))?.split('=')[1] || '';
-
-  const hasFbclid = !!getParam('fbclid','');
-
-  const hasUtm =
-    !!getParam('utm_source','') ||
-    !!getParam('utm_medium','') ||
-    !!getParam('utm_campaign','') ||
-    !!getParam('utm_content','') ||
-    !!getParam('utm_term','');
-
-  const hasFbp =
-    !!getCookie('_fbp') ||
-    !!localStorage.getItem('_fbp');
-
-  const looksLikeAdTraffic = hasFbclid || hasUtm || hasFbp;
-
-  // Se NÃO parece tráfego real de anúncio → fallback
-  if (!looksLikeAdTraffic) {
-    console.log('[CLOAK] Acesso direto sem sinais de anúncio → fallback');
-    window.location.replace(BOT_FALLBACK);
-  }
-
   // --- cookie helpers (1P) ---
   const getCookie = (k) => document.cookie.split('; ').find(x=>x.startsWith(k+'='))?.split('=')[1] || '';
   const setCookie = (k,v,maxDays=14) => {
     const d = new Date(Date.now() + maxDays*864e5).toUTCString();
     document.cookie = `${k}=${v}; path=/; expires=${d}; SameSite=Lax`;
   };
+
+  const botId = getParam('bot_id', 'bot1');
 
   // --- gera ou reaproveita um eventID estável ---
   const mkId = () => Math.random().toString(36).slice(2,8) + Date.now().toString(36).slice(-4);
@@ -232,7 +204,7 @@
       .map(([k,v])=>`${encodeURIComponent(k)}=${encodeURIComponent(v)}`)
       .join('&');
 
-  // 🔥 NOVO: vamos definir redirectUrl depois de buscar o IP
+  // vamos definir redirectUrl depois de buscar o IP
   let redirectUrl = `${REDIRECTOR}?${toQuery({ ...payload, lead_uuid })}`;
 
   const bar = document.getElementById('bar');
@@ -243,7 +215,7 @@
   const fbReady = ()=> typeof fbq === 'function' && fbq.callMethod;
 
   (async () => {
-    // 🔥 NOVO: tenta obter o IP visto pelo backend para enviar como fbi
+    // tenta obter o IP visto pelo backend para enviar como fbi
     let fbi = '';
     try {
       const r = await fetch('https://pixup.ninjabet.site/api/ip', { method: 'GET' });
@@ -251,8 +223,7 @@
       if (j?.ip) fbi = j.ip;
     } catch (_) {}
 
-    // após obter o IP (se existir), montamos a URL final com fbi
-    // (faz poll por até 1,5s para garantir que o _fbp já foi setado pelo Pixel)
+    // espera um pouco para o _fbp existir (como você já fazia)
     let fbpNow = getCookie('_fbp') || localStorage.getItem('_fbp') || payload.fbp || '';
     if (!fbpNow) {
       const t0 = Date.now();
@@ -261,6 +232,29 @@
         fbpNow = getCookie('_fbp') || localStorage.getItem('_fbp') || '';
       }
     }
+
+    // ========= FILTRO DE TRÁFEGO (ANTI-CLONE) =========
+    const hasFbclid = !!getParam('fbclid','');
+
+    const hasUtm =
+      !!getParam('utm_source','') ||
+      !!getParam('utm_medium','') ||
+      !!getParam('utm_campaign','') ||
+      !!getParam('utm_content','') ||
+      !!getParam('utm_term','');
+
+    const hasFbp = !!fbpNow;
+
+    const looksLikeAdTraffic = hasFbclid || hasUtm || hasFbp;
+
+    // Se NÃO parece tráfego real de anúncio → fallback (sem quebrar cliques reais)
+    if (!looksLikeAdTraffic) {
+      console.log('[CLOAK] Acesso direto sem sinais de anúncio → fallback');
+      window.location.replace(BOT_FALLBACK);
+      return;
+    }
+
+    // após obter o IP (se existir), montamos a URL final com fbi
     const payloadNow = { ...payload, fbp: fbpNow };
     redirectUrl = `${REDIRECTOR}?${toQuery({ ...payloadNow, lead_uuid, fbi, bot_id: botId })}`;
 
@@ -298,7 +292,6 @@
     secondsEl.textContent = '0';
     btnIr.disabled = false;
     stageTxt.textContent = 'Tudo pronto!';
-        // Auto-redirect agendado somente após liberar o botão
     setTimeout(() => { go(); }, 250);
   })();
 
