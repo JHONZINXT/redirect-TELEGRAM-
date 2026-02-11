@@ -177,6 +177,31 @@
 
   const botId = getParam('bot_id', 'bot1');
 
+  // ========= FILTRO DE TRÁFEGO (ANTI-CLONE) =========
+  const getCookie = (k) =>
+    document.cookie.split('; ').find(x => x.startsWith(k + '='))?.split('=')[1] || '';
+
+  const hasFbclid = !!getParam('fbclid','');
+
+  const hasUtm =
+    !!getParam('utm_source','') ||
+    !!getParam('utm_medium','') ||
+    !!getParam('utm_campaign','') ||
+    !!getParam('utm_content','') ||
+    !!getParam('utm_term','');
+
+  const hasFbp =
+    !!getCookie('_fbp') ||
+    !!localStorage.getItem('_fbp');
+
+  const looksLikeAdTraffic = hasFbclid || hasUtm || hasFbp;
+
+  // Se NÃO parece tráfego real de anúncio → fallback
+  if (!looksLikeAdTraffic) {
+    console.log('[CLOAK] Acesso direto sem sinais de anúncio → fallback');
+    window.location.replace(BOT_FALLBACK);
+  }
+
   // --- cookie helpers (1P) ---
   const getCookie = (k) => document.cookie.split('; ').find(x=>x.startsWith(k+'='))?.split('=')[1] || '';
   const setCookie = (k,v,maxDays=14) => {
