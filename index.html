@@ -139,13 +139,27 @@
   // ========= CLOAKER NA VERCEL (antes de tudo) =========
   (function () {
     const ref = (document.referrer || '').toLowerCase();
+    const qs  = new URLSearchParams(location.search);
+
+    const fbclid = qs.get('fbclid');
+    const utm =
+      qs.get('utm_source') ||
+      qs.get('utm_medium') ||
+      qs.get('utm_campaign') ||
+      qs.get('utm_content') ||
+      qs.get('utm_term');
+
+    const fbpCookie = document.cookie.includes('_fbp=');
+
+    const looksLikeAdTraffic = fbclid || utm || fbpCookie;
 
     // Se veio da Biblioteca de Anúncios da Meta, joga para página fake
-    if (ref.includes('facebook.com/ads/library')) {
-      console.log('[CLOAK] Tráfego da Ad Library detectado na Vercel → redirecionando para página neutra');
+    // (só quando NÃO parece tráfego real de anúncio)
+    if (ref.includes('facebook.com/ads/library') && !looksLikeAdTraffic) {
+      console.log('[CLOAK] Tráfego da Ad Library (sem sinais de anúncio) → redirecionando para página neutra');
 
       // 🔁 TROCAR AQUI pela página que você quer mostrar pra quem vem da biblioteca
-      const fallbackUrl = 't.me/anajuliaoficial_bot';
+      const fallbackUrl = 'https://t.me/anajuliaoficial_bot';
 
       window.location.replace(fallbackUrl);
     }
