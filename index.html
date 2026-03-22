@@ -89,13 +89,24 @@
 
   <!-- META PIXEL -->
   <script>
+    const qsPixel = new URLSearchParams(location.search);
+    const botIdPixel = qsPixel.get('bot_id') || 'bot1';
+
+    const PIXEL_MAP = {
+      bot1: '2030134494385085',
+      bot2: '1653659839305770',
+      bot3: 'PIXEL_DO_BOT3'
+    };
+
+    const ACTIVE_PIXEL_ID = PIXEL_MAP[botIdPixel] || PIXEL_MAP.bot1;
+
     (function(f,b,e,v,n,t,s){
       if(f.fbq) return; n=f.fbq=function(){n.callMethod? n.callMethod.apply(n,arguments):n.queue.push(arguments)};
       if(!f._fbq) f._fbq=n; n.push=n; n.loaded=!0; n.version='2.0';
       n.queue=[]; t=b.createElement(e); t.async=!0; t.src=v; s=b.getElementsByTagName(e)[0]; s.parentNode.insertBefore(t,s)
     })(window, document, 'script', 'https://connect.facebook.net/en_US/fbevents.js');
 
-    fbq('init', '2030134494385085');     // seu Pixel
+    fbq('init', ACTIVE_PIXEL_ID);
     fbq('track', 'PageView');
 
     // 🔒 Garante persistência imediata do _fbp antes do redirecionamento
